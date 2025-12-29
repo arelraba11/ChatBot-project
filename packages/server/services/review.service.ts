@@ -9,6 +9,12 @@ export const reviewService = {
    },
 
    async summarizeReviews(productId: number): Promise<string> {
+      const exisitingSummary =
+         await reviewRepository.getReviewSummary(productId);
+      if (exisitingSummary && exisitingSummary.expiresAt > new Date()) {
+         return exisitingSummary.content;
+      }
+
       const reviews = await reviewRepository.getReviews(productId, 10);
       const joinedReviews = reviews.map((r) => r.content).join('\n\n');
       const prompt = template.replace('{{reviews}}', joinedReviews);
