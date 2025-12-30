@@ -34,8 +34,6 @@ export async function route(
          return await getWeather(intent.city);
 
       case 'general':
-      default:
-         const response = await chatService.sendMessage(prompt, conversationId);
-         return response.message;
+         return (await chatService.sendMessage(prompt)).message;
    }
 }

@@ -1,90 +1,79 @@
-# ChatBot Agent (Work in Progress)
+# Intelligent Chatbot with Router-Based Architecture
 
-A work-in-progress backend agent built with TypeScript and Bun. This repository serves as an experimental and evolving foundation for an intelligent agent that may later be integrated into a larger academic or production system.
+This project implements an intelligent chatbot built around a router-based
+architecture. The system uses an LLM only for intent classification and
+general conversation, while routing specific intents to deterministic
+backend services.
 
-## Overview
+The goal is to demonstrate controlled, reliable usage of LLMs combined with
+traditional backend logic.
 
-This project is currently under active development and design exploration. Its exact responsibilities and final architecture are still being defined in collaboration with an academic supervisor.
+---
 
-At this stage, the focus is on:
+## Features
 
-- Establishing a clean and flexible project structure
-- Experimenting with agent-oriented backend design
-- Using modern tooling (Bun + TypeScript)
-- Keeping the codebase easy to extend and refactor
+- LLM-based intent classification using a dedicated system prompt
+- Deterministic backend handling for:
+  - Mathematical calculations
+  - Currency exchange rates
+  - Weather information via an external API
+- General AI chat fallback
+- Persistent conversation memory across server restarts
+- Clear separation between routing logic, services, and LLM usage
 
-## Status
+---
 
-This repository should be considered **experimental**.
+## Architecture Overview
 
-Functionality, structure, and responsibilities may change as the project evolves and as system requirements become clearer.
+The system is built around a central **Router** component.
 
-## Tech Stack
+### Request Flow
 
-- TypeScript
-- Bun runtime
-- Node-style backend structure
-- ESLint, Prettier, Husky for code quality
+1. The user sends a message from the client along with a persistent
+   `conversationId`.
+2. An LLM-based classifier analyzes the input and returns a structured JSON
+   describing the intent and extracted parameters.
+3. The Router dispatches the request to the appropriate handler:
+   - Math Service (deterministic)
+   - Exchange Service (deterministic)
+   - Weather Service (external API)
+   - Chat Service (LLM fallback)
+4. Conversation state is persisted on disk to allow continuity across server
+   restarts.
 
-## Project Structure
+---
 
-```
-.
-├── .husky/                  # Git hooks
-├── packages/               # Local workspace packages (optional / future use)
-├── index.ts                # Application entry point
-├── package.json            # Dependencies and scripts
-├── tsconfig.json           # TypeScript configuration
-├── bun.lock                # Bun lockfile
-├── .prettierrc             # Formatting rules
-├── .lintstagedrc           # Linting configuration
-└── README.md
-```
+## Intent Routing
 
-## Prerequisites
+| Intent    | Handler              | LLM Used |
+|----------|----------------------|----------|
+| Math     | math.service.ts       | No       |
+| Exchange | exchange.service.ts   | No       |
+| Weather  | weather.service.ts    | No (API) |
+| General  | chat.service.ts       | Yes      |
 
-- Bun installed locally\
-  Installation instructions: [https://bun.sh/](https://bun.sh/)
+---
 
-## Installation
+## Conversation Persistence
 
-```bash
-git clone https://github.com/arelraba11/ChatBot-project.git
-cd ChatBot-project
-bun install
-```
+The system supports conversation continuity across server restarts.
+
+- Each conversation is identified by a unique `conversationId`.
+- The client stores the `conversationId` in `localStorage`.
+- The server persists the last response ID per conversation in a local JSON file.
+- After a server restart, the chatbot continues the conversation using the
+  stored state.
+
+This design demonstrates basic persistence without relying on a database.
+
+---
 
 ## Running the Project
 
+### Server
+
 ```bash
-bun run index.ts
+cd packages/server
+bun install
+bun run dev
 ```
-
-The current entry point is `index.ts`. As the design stabilizes, the codebase may be refactored into dedicated modules or services.
-
-## Design Notes
-
-This project is intentionally kept lightweight and flexible. It is expected to evolve into one of the following roles (not finalized):
-
-- Intelligent agent component
-- Backend service within a larger system
-- Supporting service for an academic final project
-
-No final design decisions have been locked yet.
-
-## Future Direction (Tentative)
-
-Possible future directions include:
-
-- Integration with LLM or AI services
-- Agent-to-agent communication
-- API-based interaction with other system components
-- Integration into a larger data or AI-driven platform
-
-## Purpose
-
-The primary goal of this repository is exploration and iteration. It acts as a sandbox for architectural decisions before committing to a finalized system design.
-
-## License
-
-Open for learning, experimentation, and academic use.

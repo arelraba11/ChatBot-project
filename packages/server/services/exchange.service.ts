@@ -1,22 +1,15 @@
 export type CurrencyCode = 'USD' | 'EUR' | 'ILS';
 
-/**
- * Detects a currency exchange query and extracts the currency code.
- * Uses deterministic string matching (no LLM).
- */
 export function detectExchangeCurrency(text: string): CurrencyCode | null {
    const t = text.toLowerCase();
 
-   if (t.includes('usd') || t.includes('דולר')) return 'USD';
-   if (t.includes('eur') || t.includes('אירו')) return 'EUR';
-   if (t.includes('ils') || t.includes('שקל')) return 'ILS';
+   if (t.includes('usd') || t.includes('dollar')) return 'USD';
+   if (t.includes('eur') || t.includes('euro')) return 'EUR';
+   if (t.includes('ils') || t.includes('shekel')) return 'ILS';
 
    return null;
 }
 
-/**
- * Returns a static exchange rate for a given currency.
- */
 export function getExchangeRate(currency: CurrencyCode): string {
    const rates: Record<CurrencyCode, number> = {
       USD: 3.2,
@@ -24,6 +17,5 @@ export function getExchangeRate(currency: CurrencyCode): string {
       ILS: 1,
    };
 
-   const rate = rates[currency];
-   return `שער ${currency} הוא ${rate} ₪`;
+   return `The exchange rate for ${currency} is ${rates[currency]} ILS`;
 }

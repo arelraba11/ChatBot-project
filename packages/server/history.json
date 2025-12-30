@@ -1,0 +1,42 @@
+[
+  {
+    "role": "user",
+    "content": "איך קוראים לי?"
+  },
+  {
+    "role": "assistant",
+    "content": "אני לא יודע איך קוראים לך. איך היית רוצה שאקרא לך?"
+  },
+  {
+    "role": "user",
+    "content": "hey"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey! How can I assist you today?"
+  },
+  {
+    "role": "user",
+    "content": "my name is Arel"
+  },
+  {
+    "role": "assistant",
+    "content": "Nice to meet you, Arel! How can I help you today?"
+  },
+  {
+    "role": "user",
+    "content": "hey"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey again, Arel! What’s on your mind?"
+  },
+  {
+    "role": "user",
+    "content": "hey"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey, Arel! Is there something specific you'd like to talk about?"
+  }
+]
