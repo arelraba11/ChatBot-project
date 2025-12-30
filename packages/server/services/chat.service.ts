@@ -18,11 +18,15 @@ Answer the user's questions clearly and concisely.
 `;
 
 let history: ChatMessage[] = [];
+let shouldSendWelcomeBack = false;
 
 // Load history on startup
 if (await Bun.file(HISTORY_FILE).exists()) {
    history = await Bun.file(HISTORY_FILE).json();
-   console.log('Welcome back');
+
+   if (history.length > 0) {
+      shouldSendWelcomeBack = true;
+   }
 } else {
    history = [];
 }
@@ -55,11 +59,25 @@ export const chatService = {
       // Reset command
       if (prompt.trim() === '/reset') {
          history = [];
+         shouldSendWelcomeBack = false;
+
          await Bun.write(HISTORY_FILE, JSON.stringify(history, null, 2));
+
          return {
             id: 'reset',
             message:
                'The conversation has been reset. You can start a new one.',
+         };
+      }
+
+      // Send welcome-back message once, before any LLM response
+      if (shouldSendWelcomeBack) {
+         shouldSendWelcomeBack = false;
+
+         return {
+            id: 'welcome-back',
+            message:
+               'Welcome back! Your previous conversation has been restored.',
          };
       }
 

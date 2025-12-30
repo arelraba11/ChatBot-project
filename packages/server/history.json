@@ -1,11 +1,15 @@
 [
   {
+    "role": "assistant",
+    "content": "Welcome back! Your previous conversation has been restored."
+  },
+  {
     "role": "user",
-    "content": "איך קוראים לי?"
+    "content": "remember that my name is Arel"
   },
   {
     "role": "assistant",
-    "content": "אני לא יודע איך קוראים לך. איך היית רוצה שאקרא לך?"
+    "content": "Got it, Arel! How can I assist you today?"
   },
   {
     "role": "user",
@@ -13,15 +17,7 @@
   },
   {
     "role": "assistant",
-    "content": "Hey! How can I assist you today?"
-  },
-  {
-    "role": "user",
-    "content": "my name is Arel"
-  },
-  {
-    "role": "assistant",
-    "content": "Nice to meet you, Arel! How can I help you today?"
+    "content": "Hey, Arel! How's it going? What can I help you with today?"
   },
   {
     "role": "user",
@@ -37,6 +33,6 @@
   },
   {
     "role": "assistant",
-    "content": "Hey, Arel! Is there something specific you'd like to talk about?"
+    "content": "Hey, Arel! It seems like you're just saying hi. Is there something specific you'd like to talk about?"
   }
 ]
