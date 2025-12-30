@@ -1,23 +1,41 @@
-import { isMathExpression, calculateMath } from '../services/math.service';
-import {
-   detectExchangeCurrency,
-   getExchangeRate,
-} from '../services/exchange.service';
+import { classifyIntent } from './classifyIntent';
+import { calculateMath } from '../services/math.service';
+import { getExchangeRate } from '../services/exchange.service';
+import { getWeather } from '../services/weather.service';
 import { chatService } from '../services/chat.service';
 
+/**
+ * Routes user input based on LLM classification result.
+ * Executes deterministic logic for known intents and falls back to LLM for general chat.
+ */
 export async function route(
    prompt: string,
    conversationId: string
 ): Promise<string> {
-   if (isMathExpression(prompt)) {
-      return calculateMath(prompt);
-   }
+   const intent = await classifyIntent(prompt);
 
-   const currency = detectExchangeCurrency(prompt);
-   if (currency) {
-      return getExchangeRate(currency);
-   }
+   switch (intent.intent) {
+      case 'math':
+         if (!intent.expression) {
+            return 'לא הצלחתי להבין את התרגיל';
+         }
+         return calculateMath(intent.expression);
 
-   const response = await chatService.sendMessage(prompt, conversationId);
-   return response.message;
+      case 'exchange':
+         if (!intent.currencyCode) {
+            return 'איזה מטבע לבדוק?';
+         }
+         return getExchangeRate(intent.currencyCode);
+
+      case 'weather':
+         if (!intent.city) {
+            return 'לא הצלחתי להבין איזו עיר';
+         }
+         return await getWeather(intent.city);
+
+      case 'general':
+      default:
+         const response = await chatService.sendMessage(prompt, conversationId);
+         return response.message;
+   }
 }

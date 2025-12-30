@@ -8,17 +8,13 @@ export function isMathExpression(text: string): boolean {
 
 /**
  * Normalizes common Hebrew math words into mathematical operators.
- * This allows deterministic evaluation without using NLP or LLMs.
  */
 function normalizeHebrewMath(text: string): string {
    return text
-      .replace(/ועוד/g, '+')
-      .replace(/פלוס/g, '+')
-      .replace(/פחות/g, '-')
-      .replace(/מינוס/g, '-')
+      .replace(/ועוד|פלוס/g, '+')
+      .replace(/פחות|מינוס/g, '-')
       .replace(/כפול/g, '*')
-      .replace(/חלקי/g, '/')
-      .replace(/לחלק/g, '/');
+      .replace(/חלקי|לחלק/g, '/');
 }
 
 /**
@@ -31,18 +27,19 @@ function normalizeExponent(expression: string): string {
    );
 }
 
+/**
+ * Evaluates a sanitized mathematical expression deterministically.
+ */
 export function calculateMath(expression: string): string {
    try {
-      // Normalize Hebrew math words
-      const normalized = normalizeHebrewMath(expression);
-
-      let safeExpression = normalized.replace(/[^0-9+\-*/().%^ ]/g, '').trim();
+      let safeExpression = normalizeHebrewMath(expression)
+         .replace(/[^0-9+\-*/().%^ ]/g, '')
+         .trim();
 
       if (!safeExpression) {
          return 'Invalid expression';
       }
 
-      // Normalize exponentiation
       safeExpression = normalizeExponent(safeExpression);
 
       const result = eval(safeExpression);

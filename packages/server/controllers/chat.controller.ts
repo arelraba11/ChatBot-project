@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import { chatService } from '../services/chat.service';
 import z from 'zod';
 import { route } from '../router/chat.router';
 
