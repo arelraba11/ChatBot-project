@@ -1,4 +1,4 @@
-type CurrencyCode = 'USD' | 'EUR' | 'ILS';
+export type CurrencyCode = 'USD' | 'EUR' | 'ILS';
 
 /**
  * Detects a currency exchange query and extracts the currency code.

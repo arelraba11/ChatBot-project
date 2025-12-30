@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { llmClient } from '../llm/client';
+import type { CurrencyCode } from '../services/exchange.service';
 
 const classifierPrompt = fs.readFileSync(
    path.join(__dirname, '../prompts/classifier.txt'),
@@ -11,10 +12,11 @@ export type IntentResult = {
    intent: 'weather' | 'math' | 'exchange' | 'general';
    city: string | null;
    expression: string | null;
-   currencyCode: string | null;
+   currencyCode: CurrencyCode | null;
 };
 
 const VALID_INTENTS = ['weather', 'math', 'exchange', 'general'] as const;
+const VALID_CURRENCIES: readonly CurrencyCode[] = ['USD', 'EUR', 'ILS'];
 
 export async function classifyIntent(prompt: string): Promise<IntentResult> {
    const response = await llmClient.generateText({
@@ -36,10 +38,11 @@ export async function classifyIntent(prompt: string): Promise<IntentResult> {
          intent: parsed.intent,
          city: parsed.city ?? null,
          expression: parsed.expression ?? null,
-         currencyCode: parsed.currencyCode ?? null,
+         currencyCode: VALID_CURRENCIES.includes(parsed.currencyCode)
+            ? parsed.currencyCode
+            : null,
       };
    } catch {
-      // Fallback: treat as general chat
       return {
          intent: 'general',
          city: null,
