@@ -4,16 +4,15 @@ import { conversationRepository } from '../repositories/conversation.repository'
 import template from '../prompts/chatbot.txt';
 import { llmClient } from '../llm/client';
 
-const parkInfo = fs.readFileSync(
-   path.join(__dirname, '..', 'prompts', 'WonderWorld.md'),
-   'utf-8'
-);
-const instructions = template.replace('{{parkInfo}}', parkInfo);
-
 type ChatResponse = {
    id: string;
    message: string;
 };
+
+const instructions = `
+You are a helpful AI assistant.
+Answer the user's questions clearly and concisely.
+`;
 
 // Public interface
 // Leaky abstraction
