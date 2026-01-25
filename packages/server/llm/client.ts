@@ -7,10 +7,10 @@ const client = new OpenAI({
 type GenerateTextOption = {
    model?: string;
    prompt: string;
-   instructions?: string;
    temperature?: number;
    maxTokens?: number;
    previousResponseId?: string;
+   responseFormat?: { type: 'json_object' } | { type: 'text' };
 };
 
 type GenerateTextResult = {
@@ -20,21 +20,43 @@ type GenerateTextResult = {
 
 export const llmClient = {
    async generateText({
-      model = 'gpt-4.1',
+      model = 'gpt-4o-mini',
       prompt,
-      instructions,
       temperature = 0.2,
       maxTokens = 300,
       previousResponseId,
+      responseFormat,
    }: GenerateTextOption): Promise<GenerateTextResult> {
-      const response = await client.responses.create({
+      const params: any = {
          model,
          input: prompt,
-         instructions,
          temperature,
          max_output_tokens: maxTokens,
-         previous_response_id: previousResponseId,
-      });
+      };
+
+      if (previousResponseId) {
+         params.previous_response_id = previousResponseId;
+      }
+
+      if (responseFormat?.type === 'json_object') {
+         params.response_format = { type: 'json_object' };
+      }
+
+      let response;
+      try {
+         response = await client.responses.create(params);
+      } catch (error: any) {
+         if (
+            responseFormat?.type === 'json_object' &&
+            (error?.message?.includes('response_format') ||
+               error?.code === 'invalid_request_error')
+         ) {
+            delete params.response_format;
+            response = await client.responses.create(params);
+         } else {
+            throw error;
+         }
+      }
 
       return {
          id: response.id,

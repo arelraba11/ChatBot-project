@@ -1,4 +1,4 @@
-import classifierTemplate from '../prompts/classifier.txt';
+import { classifierPrompt } from '../prompts/prompts';
 import { llmClient } from '../llm/client';
 import { getWeather } from './apps/weather.app';
 import { calculateMath } from './apps/math.app';
@@ -8,13 +8,17 @@ import { historyRepository } from '../repositories/history.repository';
 
 type Classification = {
    intent: 'weather' | 'math' | 'exchange' | 'general';
-   city: string | null;
-   expression: string | null;
-   currencyCode: string | null;
+   parameters: {
+      city: string | null;
+      expression: string | null;
+      from: string | null;
+      to: string | null;
+   };
+   confidence: number;
 };
 
 function fillTemplate(userInput: string) {
-   return classifierTemplate.replace('{{USER_INPUT}}', userInput);
+   return classifierPrompt.replace('{{USER_INPUT}}', userInput);
 }
 
 async function classify(userInput: string): Promise<Classification> {
@@ -24,65 +28,114 @@ async function classify(userInput: string): Promise<Classification> {
       model: 'gpt-4o-mini',
       prompt,
       temperature: 0,
-      maxTokens: 120,
+      maxTokens: 200,
+      responseFormat: { type: 'json_object' },
    });
 
-   // Parse JSON strictly
+   // Log the raw JSON response (useful for debugging and assignment demonstration)
+   console.log('RAW JSON FROM LLM:', r.text);
+
+   // Parse JSON strictly with a safe fallback
    let obj: any;
    try {
-      obj = JSON.parse(r.text);
-   } catch {
+      // Remove markdown code blocks if present
+      let jsonText = r.text.trim();
+      if (jsonText.startsWith('```json')) {
+         jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (jsonText.startsWith('```')) {
+         jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      obj = JSON.parse(jsonText);
+   } catch (error) {
+      console.error('JSON parse error:', error);
       // Fallback if the model returned invalid JSON
       return {
          intent: 'general',
-         city: null,
-         expression: null,
-         currencyCode: null,
+         parameters: {
+            city: null,
+            expression: null,
+            from: null,
+            to: null,
+         },
+         confidence: 0.0,
       };
    }
 
+   // Validate intent
    const intent = obj.intent;
    if (!['weather', 'math', 'exchange', 'general'].includes(intent)) {
+      console.warn('Invalid intent received:', intent);
       return {
          intent: 'general',
-         city: null,
-         expression: null,
-         currencyCode: null,
+         parameters: {
+            city: null,
+            expression: null,
+            from: null,
+            to: null,
+         },
+         confidence: 0.0,
       };
    }
+
+   // Validate and extract parameters safely
+   const params = obj.parameters || {};
+   const confidence =
+      typeof obj.confidence === 'number' &&
+      obj.confidence >= 0 &&
+      obj.confidence <= 1
+         ? obj.confidence
+         : 0.5;
 
    return {
       intent,
-      city: typeof obj.city === 'string' ? obj.city : null,
-      expression: typeof obj.expression === 'string' ? obj.expression : null,
-      currencyCode:
-         typeof obj.currencyCode === 'string' ? obj.currencyCode : null,
+      parameters: {
+         city: typeof params.city === 'string' ? params.city : null,
+         expression:
+            typeof params.expression === 'string' ? params.expression : null,
+         from: typeof params.from === 'string' ? params.from : null,
+         to: typeof params.to === 'string' ? params.to : null,
+      },
+      confidence,
    };
 }
 
 export const routerService = {
    async handleUserMessage(conversationId: string, userInput: string) {
-      console.log('ROUTER SERVICE HIT', { conversationId, userInput });
+      console.log('Router service called with:', { conversationId, userInput });
 
       // Reset command
       if (userInput.trim() === '/reset') {
          await historyRepository.resetAll();
-         return { message: 'Conversation has been reset' };
+         return {
+            message: 'Conversation has been reset. A new session has started.',
+         };
       }
 
       const decision = await classify(userInput);
 
+      // Log classification result (useful for assignment demonstration)
+      console.log('Classification result:', {
+         intent: decision.intent,
+         confidence: decision.confidence,
+         parameters: decision.parameters,
+      });
+
       let assistantMessage = '';
 
-      if (decision.intent === 'weather' && decision.city) {
-         assistantMessage = await getWeather(decision.city);
-      } else if (decision.intent === 'math' && decision.expression) {
-         assistantMessage = calculateMath(decision.expression);
-      } else if (decision.intent === 'exchange' && decision.currencyCode) {
-         assistantMessage = getExchangeRate(decision.currencyCode, userInput);
+      if (decision.intent === 'weather' && decision.parameters.city) {
+         assistantMessage = await getWeather(decision.parameters.city);
+      } else if (decision.intent === 'math') {
+         // If an expression exists, use it. Otherwise, treat the input as a word problem.
+         const mathInput = decision.parameters.expression || userInput;
+         assistantMessage = await calculateMath(mathInput);
+      } else if (decision.intent === 'exchange' && decision.parameters.from) {
+         assistantMessage = getExchangeRate(
+            decision.parameters.from,
+            userInput
+         );
       } else {
          const history = historyRepository.get(conversationId);
-         console.log('HISTORY LENGTH:', history.length);
+         console.log('History length:', history.length);
          const r = await generalChat(history, userInput);
          assistantMessage = r.message;
       }
