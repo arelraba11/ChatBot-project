@@ -15,9 +15,11 @@ const startServer = async () => {
    const info = await historyRepository.load();
 
    if (info.loaded) {
-      console.log(`ברוך שובך! נטענו ${info.conversations} שיחות מהיסטוריה`);
+      console.log(
+         `Welcome back! Loaded ${info.conversations} conversations from history`
+      );
    } else {
-      console.log('התחלנו שיחה חדשה (אין history.json)');
+      console.log('Started a new conversation (no history.json found)');
    }
 
    app.listen(PORT, () => {

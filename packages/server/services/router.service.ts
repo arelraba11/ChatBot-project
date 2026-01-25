@@ -27,12 +27,12 @@ async function classify(userInput: string): Promise<Classification> {
       maxTokens: 120,
    });
 
-   // parse JSON strictly
+   // Parse JSON strictly
    let obj: any;
    try {
       obj = JSON.parse(r.text);
    } catch {
-      // fallback if model messed up
+      // Fallback if the model returned invalid JSON
       return {
          intent: 'general',
          city: null,
@@ -62,12 +62,12 @@ async function classify(userInput: string): Promise<Classification> {
 
 export const routerService = {
    async handleUserMessage(conversationId: string, userInput: string) {
-      console.log('ROUTER SERVICE HIT 🧠', { conversationId, userInput });
+      console.log('ROUTER SERVICE HIT', { conversationId, userInput });
 
       // Reset command
       if (userInput.trim() === '/reset') {
          await historyRepository.resetAll();
-         return { message: 'בוצע reset ✅ התחלנו שיחה חדשה.' };
+         return { message: 'Conversation has been reset' };
       }
 
       const decision = await classify(userInput);
@@ -87,7 +87,7 @@ export const routerService = {
          assistantMessage = r.message;
       }
 
-      // Save memory after each interaction
+      // Save conversation history after each interaction
       historyRepository.append(conversationId, {
          role: 'user',
          content: userInput,

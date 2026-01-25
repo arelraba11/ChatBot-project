@@ -1,20 +1,16 @@
 import type { Request, Response } from 'express';
 import z from 'zod';
-import { route } from '../router/chat.router';
+import { routerService } from '../services/router.service';
 
-// Implementation detail
 const chatSchema = z.object({
-   prompt: z
-      .string()
-      .trim()
-      .min(1, 'Prompt is required.')
-      .max(1000, 'Prompt is too long (max 1000 characters)'),
+   prompt: z.string().trim().min(1).max(1000),
    conversationId: z.uuid(),
 });
 
-// Public interface
 export const chatController = {
    async sendMessage(req: Request, res: Response) {
+      console.log('CHAT CONTROLLER HIT', req.body);
+
       const parseResult = chatSchema.safeParse(req.body);
       if (!parseResult.success) {
          res.status(400).json(z.treeifyError(parseResult.error));
@@ -22,13 +18,14 @@ export const chatController = {
       }
 
       try {
-         const { prompt, conversationId } = req.body;
-
-         const result = await route(prompt, conversationId);
-
-         res.json({ message: result });
+         const { prompt, conversationId } = parseResult.data;
+         const out = await routerService.handleUserMessage(
+            conversationId,
+            prompt
+         );
+         res.json({ message: out.message });
       } catch (error) {
-         res.status(500).json({ error: ' Failed to generate a response.' });
+         res.status(500).json({ error: 'Failed to generate a response.' });
       }
    },
 };

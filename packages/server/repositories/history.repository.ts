@@ -38,8 +38,7 @@ export const historyRepository = {
       // delete file if exists
       const file = Bun.file(HISTORY_PATH);
       if (await file.exists()) {
-         await Bun.write(HISTORY_PATH, ''); // ensure file not locked
-         // Bun doesn't have unlink built-in; use node:fs/promises (works in Bun)
+         await Bun.write(HISTORY_PATH, '');
          const { unlink } = await import('node:fs/promises');
          await unlink(HISTORY_PATH).catch(() => {});
       }
