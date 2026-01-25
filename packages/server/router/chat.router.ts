@@ -1,7 +1,7 @@
 import { classifyIntent } from './classifyIntent';
-import { calculateMath } from '../services/math.service';
-import { getExchangeRate } from '../services/exchange.service';
-import { getWeather } from '../services/weather.service';
+import { calculateMath } from '../services/apps/math.app';
+import { getExchangeRate } from '../services/apps/exchange.app';
+import { getWeather } from '../services/apps/weather.app';
 import { chatService } from '../services/chat.service';
 
 /**

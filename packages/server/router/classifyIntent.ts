@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { llmClient } from '../llm/client';
-import type { CurrencyCode } from '../services/exchange.service';
+import type { CurrencyCode } from '../services/apps/exchange.app';
 
 const classifierPrompt = fs.readFileSync(
    path.join(__dirname, '../prompts/classifier.txt'),
