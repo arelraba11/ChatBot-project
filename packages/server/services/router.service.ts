@@ -4,15 +4,17 @@ import { getWeather } from './apps/weather.app';
 import { calculateMath } from './apps/math.app';
 import { getExchangeRate } from './apps/exchange.app';
 import { generalChat } from './apps/general.app';
+import { analyzeReviewWithSelfCorrection } from './apps/reviewAnalyzer.app';
 import { historyRepository } from '../repositories/history.repository';
 
 type Classification = {
-   intent: 'weather' | 'math' | 'exchange' | 'general';
+   intent: 'weather' | 'math' | 'exchange' | 'analyzeReview' | 'general';
    parameters: {
       city: string | null;
       expression: string | null;
       from: string | null;
       to: string | null;
+      reviewText: string | null;
    };
    confidence: number;
 };
@@ -56,6 +58,7 @@ async function classify(userInput: string): Promise<Classification> {
             expression: null,
             from: null,
             to: null,
+            reviewText: null,
          },
          confidence: 0.0,
       };
@@ -63,7 +66,11 @@ async function classify(userInput: string): Promise<Classification> {
 
    // Validate intent
    const intent = obj.intent;
-   if (!['weather', 'math', 'exchange', 'general'].includes(intent)) {
+   if (
+      !['weather', 'math', 'exchange', 'analyzeReview', 'general'].includes(
+         intent
+      )
+   ) {
       console.warn('Invalid intent received:', intent);
       return {
          intent: 'general',
@@ -72,6 +79,7 @@ async function classify(userInput: string): Promise<Classification> {
             expression: null,
             from: null,
             to: null,
+            reviewText: null,
          },
          confidence: 0.0,
       };
@@ -94,9 +102,34 @@ async function classify(userInput: string): Promise<Classification> {
             typeof params.expression === 'string' ? params.expression : null,
          from: typeof params.from === 'string' ? params.from : null,
          to: typeof params.to === 'string' ? params.to : null,
+         reviewText:
+            typeof params.reviewText === 'string' ? params.reviewText : null,
       },
       confidence,
    };
+}
+
+function formatReviewAnalysisForUser(analysis: {
+   summary: string;
+   overall_sentiment: string;
+   score: number;
+   aspects: Array<{ topic: string; sentiment: string; detail: string }>;
+}) {
+   const lines: string[] = [];
+   lines.push('Analyzing review...');
+   lines.push(`Summary: ${analysis.summary}`);
+   lines.push(`Overall sentiment: ${analysis.overall_sentiment}`);
+   lines.push(`Score: ${analysis.score}/10`);
+
+   if (analysis.aspects.length) {
+      lines.push('');
+      lines.push('Detailed aspects:');
+      analysis.aspects.forEach((a, i) => {
+         lines.push(` ${i + 1}. ${a.topic} (${a.sentiment}): "${a.detail}"`);
+      });
+   }
+
+   return lines.join('\n');
 }
 
 export const routerService = {
@@ -133,6 +166,14 @@ export const routerService = {
             decision.parameters.from,
             userInput
          );
+      } else if (
+         decision.intent === 'analyzeReview' &&
+         decision.parameters.reviewText
+      ) {
+         const analysis = await analyzeReviewWithSelfCorrection(
+            decision.parameters.reviewText
+         );
+         assistantMessage = formatReviewAnalysisForUser(analysis);
       } else {
          const history = historyRepository.get(conversationId);
          console.log('History length:', history.length);

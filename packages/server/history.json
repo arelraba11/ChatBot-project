@@ -87,6 +87,166 @@
     {
       "role": "assistant",
       "content": "Of course, I remember. We discussed your trip to London, currency conversion, and John's apple situation. Anything else you'd like to dive into?"
+    },
+    {
+      "role": "user",
+      "content": "I am flying to London and I need to know if I should bring a coat."
+    },
+    {
+      "role": "assistant",
+      "content": "London, United Kingdom: 8.1°C, partly cloudy, wind 10.5 km/h"
+    },
+    {
+      "role": "user",
+      "content": "How much will it cost me to fly to Paris?"
+    },
+    {
+      "role": "assistant",
+      "content": "That depends on your departure city, the airline, and how far in advance you book. Think of it like querying a database—lots of variables affect the final result. You might want to check a flight aggregator for the most accurate pricing."
+    },
+    {
+      "role": "user",
+      "content": "The hotel was great, but what is the weather in Rome?"
+    },
+    {
+      "role": "assistant",
+      "content": "Rome, Italy: 12.2°C, partly cloudy, wind 12.8 km/h"
+    },
+    {
+      "role": "user",
+      "content": "The pizza was amazing but the delivery guy was an hour late. Analyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: Great pizza but poor delivery timing.\nOverall sentiment: Mixed\nScore: 5/10\n\nDetailed aspects:\n 1. food quality (Positive): \"The pizza was amazing\"\n 2. delivery (Negative): \"The delivery guy was an hour late\""
+    },
+    {
+      "role": "user",
+      "content": "How much is 100 dollars in Israeli shekels?"
+    },
+    {
+      "role": "assistant",
+      "content": "The USD exchange rate is 3.75 ILS"
+    },
+    {
+      "role": "user",
+      "content": "John has 5 apples, he ate 2 and bought 10 more. How many does he have now?"
+    },
+    {
+      "role": "assistant",
+      "content": "The result is 13"
+    },
+    {
+      "role": "user",
+      "content": "I had 100 dollars, I spent 40 and got 10 more. How much do I have?"
+    },
+    {
+      "role": "assistant",
+      "content": "The result is 70"
+    },
+    {
+      "role": "user",
+      "content": "The hotel room was clean and comfortable, but the service was slow and the staff were unfriendly.\nAnalyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: The hotel room was clean and comfortable, but the service was slow and the staff were unfriendly.\nOverall sentiment: Mixed\nScore: 5/10\n\nDetailed aspects:\n 1. room quality (Positive): \"The hotel room was clean and comfortable.\"\n 2. service (Negative): \"The service was slow and the staff were unfriendly.\""
+    },
+    {
+      "role": "user",
+      "content": "The pizza was fire, but the delivery guy showed up an hour late. Analyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: Great pizza but poor delivery timing.\nOverall sentiment: Mixed\nScore: 5/10\n\nDetailed aspects:\n 1. food quality (Positive): \"The pizza was fire\"\n 2. delivery (Negative): \"The delivery guy showed up an hour late\""
+    },
+    {
+      "role": "user",
+      "content": "What do you think about politics?"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot process this request: political discussions are not within my scope due to safety protocols."
+    },
+    {
+      "role": "user",
+      "content": "I am flying to London and I need to know if I should bring a coat."
+    },
+    {
+      "role": "assistant",
+      "content": "London, United Kingdom: 8.1°C, partly cloudy, wind 10.5 km/h"
+    },
+    {
+      "role": "user",
+      "content": "How much will it cost me to fly to Paris?"
+    },
+    {
+      "role": "assistant",
+      "content": "That depends on your departure city, the airline, and how far in advance you book. Think of it like querying a database—lots of variables affect the final result. You might want to check a flight aggregator for the most accurate pricing."
+    },
+    {
+      "role": "user",
+      "content": "The hotel was great, but what is the weather in Rome?"
+    },
+    {
+      "role": "assistant",
+      "content": "Rome, Italy: 12.2°C, partly cloudy, wind 12.8 km/h"
+    },
+    {
+      "role": "user",
+      "content": "How much is 100 dollars in Israeli shekels?"
+    },
+    {
+      "role": "assistant",
+      "content": "The USD exchange rate is 3.75 ILS"
+    },
+    {
+      "role": "user",
+      "content": "John has 5 apples, he ate 2 and bought 10 more. How many does he have now?"
+    },
+    {
+      "role": "assistant",
+      "content": "The result is 13"
+    },
+    {
+      "role": "user",
+      "content": "I had 100 dollars, I spent 40 and got 10 more. How much do I have?"
+    },
+    {
+      "role": "assistant",
+      "content": "The result is 70"
+    },
+    {
+      "role": "user",
+      "content": "The hotel room was clean and comfortable, but the service was slow and the staff were unfriendly.\nAnalyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: The hotel room was clean and comfortable, but the service was slow and the staff were unfriendly.\nOverall sentiment: Mixed\nScore: 5/10\n\nDetailed aspects:\n 1. room quality (Positive): \"The hotel room was clean and comfortable.\"\n 2. service (Negative): \"The service was slow and the staff were unfriendly.\""
+    },
+    {
+      "role": "user",
+      "content": "The pizza was fire, but the delivery guy showed up an hour late.\nAnalyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: The pizza was great, but delivery was delayed.\nOverall sentiment: Mixed\nScore: 5/10\n\nDetailed aspects:\n 1. food quality (Positive): \"The pizza was fire\"\n 2. delivery (Negative): \"The delivery guy showed up an hour late\""
+    },
+    {
+      "role": "user",
+      "content": "What do you think about politics?"
+    },
+    {
+      "role": "assistant",
+      "content": "I cannot process this request: political discussions are not within my scope due to safety protocols."
+    },
+    {
+      "role": "user",
+      "content": "The service was terrible, the food was cold, and everything was awful.\nAnalyze the review."
+    },
+    {
+      "role": "assistant",
+      "content": "Analyzing review...\nSummary: The review expresses strong dissatisfaction with the service and food quality.\nOverall sentiment: Negative\nScore: 2/10\n\nDetailed aspects:\n 1. service (Negative): \"The service was terrible.\"\n 2. food (Negative): \"The food was cold.\""
     }
   ]
 }
